@@ -59,8 +59,9 @@ defmodule Cloudex.CloudinaryApi do
   @doc """
   Deletes images given their prefix
   """
-  @spec delete_prefix(String.t(), map) :: {:ok, String.t} | {:error, any}
+  @spec delete_prefix(String.t(), map) :: {:ok, String.t()} | {:error, any}
   def delete_prefix(prefix, opts \\ %{})
+
   def delete_prefix(prefix, opts) when is_bitstring(prefix) do
     case delete_by_prefix(prefix, opts) do
       {:ok, _} -> {:ok, prefix}
@@ -132,8 +133,9 @@ defmodule Cloudex.CloudinaryApi do
     }/#{Map.get(opts, :type, "upload")}?public_ids[]=#{item}"
   end
 
-  @spec delete_file(bitstring, map)
-        :: {:ok, HTTPoison.Response.t | HTTPoison.AsyncResponse.t} | {:error, HTTPoison.Error.t}
+  @spec delete_file(bitstring, map) ::
+          {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()}
+          | {:error, HTTPoison.Error.t()}
   defp delete_by_prefix(prefix, opts) do
     HTTPoison.delete(delete_prefix_url_for(opts, prefix), @cloudinary_headers, credentials())
   end
@@ -141,10 +143,13 @@ defmodule Cloudex.CloudinaryApi do
   defp delete_prefix_url_for(%{resource_type: resource_type}, prefix) do
     delete_prefix_url(resource_type, prefix)
   end
+
   defp delete_prefix_url_for(_, prefix), do: delete_prefix_url("image", prefix)
 
   defp delete_prefix_url(resource_type, prefix) do
-    "#{@base_url}#{Cloudex.Settings.get(:cloud_name)}/resources/#{resource_type}/upload?prefix=#{prefix}"
+    "#{@base_url}#{Cloudex.Settings.get(:cloud_name)}/resources/#{resource_type}/upload?prefix=#{
+      prefix
+    }"
   end
 
   @spec post(tuple | String.t(), binary, map) :: {:ok, %Cloudex.UploadedImage{}} | {:error, any}
@@ -166,14 +171,11 @@ defmodule Cloudex.CloudinaryApi do
 
   @spec prepare_opts(map | list) :: map
 
-  defp prepare_opts(%{context: context, tags: tags} = opts) when is_list(tags),
-    do: %{opts | context: context_to_list(context), tags: Enum.join(tags, ",")}
-
   defp prepare_opts(%{tags: tags} = opts) when is_list(tags),
-    do: %{opts | tags: Enum.join(tags, ",")}
+    do: %{opts | tags: Enum.join(tags, ",")} |> prepare_opts()
 
   defp prepare_opts(%{context: context} = opts) when is_map(context),
-    do: %{opts | context: context_to_list(context)}
+    do: %{opts | context: context_to_list(context)} |> prepare_opts()
 
   defp prepare_opts(opts), do: opts
 
