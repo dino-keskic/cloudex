@@ -54,12 +54,12 @@ defmodule Cloudex.Mixfile do
       {:earmark, "> 0.0.0", only: :dev},
       {:ex_doc, "> 0.0.0", only: :dev},
       {:excoveralls, "> 0.0.0", only: :test},
-      {:exvcr, "~> 0.10.2", [only: :test]},
-      {:httpoison, "~> 1.5.0"},
+      {:exvcr, "~> 0.10", [only: :test]},
+      {:httpoison, "~> 1.5"},
       {:mix_test_watch, "> 0.0.0", only: :dev},
       {:jason, "~> 1.0", optional: true},
-      {:timex, "~> 3.5.0"},
-      {:tzdata, "~> 0.5.2"}
+      {:timex, "~> 3.5"},
+      {:tzdata, "~> 0.5"}
     ]
   end
 
